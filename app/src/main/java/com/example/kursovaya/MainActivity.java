@@ -1,24 +1,37 @@
 package com.example.kursovaya;
 
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import android.os.Bundle;
+import com.example.kursovaya.ui.*;
+import com.example.kursovaya.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
+    ActivityMainBinding binding;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.bottomNav.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                show(new HomeFragment());
+                return true;
+            } else if (id == R.id.nav_results) {
+                show(new ResultsFragment());
+                return true;
+            } else if (id == R.id.nav_profile) {
+                show(new ProfileFragment());
+                return true;
+            }
+            return false;
         });
+        binding.bottomNav.setSelectedItemId(R.id.nav_home);
+    }
+
+    private void show(androidx.fragment.app.Fragment f){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, f).commit();
     }
 }
