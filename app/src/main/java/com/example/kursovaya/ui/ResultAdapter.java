@@ -18,7 +18,6 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.VH> {
 
     private final List<Task> data = new ArrayList<>();
     private final SimpleDateFormat fmt = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
-    // режим списка: "done" или "relapse"
     private String mode = "done";
 
     public void submit(List<Task> items, String mode){

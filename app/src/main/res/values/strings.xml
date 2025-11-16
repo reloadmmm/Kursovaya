@@ -6,4 +6,9 @@
     <string name="tab_home">Главная</string>
     <string name="tab_results">Результаты</string>
     <string name="tab_profile">Профиль</string>
+    <string-array name="leader_periods">
+        <item>Месяц</item>
+        <item>Полгода</item>
+        <item>Год</item>
+    </string-array>
 </resources>
