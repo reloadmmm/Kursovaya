@@ -1,9 +1,8 @@
 package com.example.kursovaya;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -21,12 +20,14 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private TaskViewModel vm;
 
+    // Firebase
     private FirebaseAuth auth;
-    private final LeaderboardRepo leaderboardRepo = new LeaderboardRepo();
-
     private String cachedNick = null;
     private String cachedPlace = null;
 
+    private final LeaderboardRepo leaderboardRepo = new LeaderboardRepo();
+
+    // слушатель входа/выхода
     private final FirebaseAuth.AuthStateListener authListener = firebaseAuth -> {
         if (firebaseAuth.getCurrentUser() != null) {
             fetchProfileAndWireLeaderboard();
@@ -36,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    // -------------------------------------------------------------
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,10 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
         vm = new ViewModelProvider(this).get(TaskViewModel.class);
 
-        // Firebase
+        // Инициализация Firebase Auth
         auth = FirebaseAuth.getInstance();
         auth.addAuthStateListener(authListener);
 
+        // нижнее меню
         binding.bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
@@ -62,48 +66,81 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+
         binding.bottomNav.setSelectedItemId(R.id.nav_home);
 
+        // Долгое нажатие по вкладке "Главная" -> показать/спрятать quickPanel в HomeFragment
+        binding.bottomNav.post(() -> {
+            View homeTab = binding.bottomNav.findViewById(R.id.nav_home);
+            if (homeTab != null) {
+                homeTab.setOnLongClickListener(v -> {
+                    androidx.fragment.app.Fragment f =
+                            getSupportFragmentManager().findFragmentById(R.id.container);
+                    if (f instanceof HomeFragment) {
+                        ((HomeFragment) f).toggleQuickPanel();
+                    }
+                    return true;
+                });
+            }
+        });
+
+        // если пользователь уже авторизован
         if (auth.getCurrentUser() != null) {
             fetchProfileAndWireLeaderboard();
         }
     }
 
+    // -------------------------------------------------------------
+
     private void show(androidx.fragment.app.Fragment f) {
-        getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(R.id.container, f)
                 .commit();
     }
 
+    // -------------------------------------------------------------
+    // получаем профиль → подписываемся на статистику → пушим в leaderboard
+    // -------------------------------------------------------------
     private void fetchProfileAndWireLeaderboard() {
-        String uid = auth.getCurrentUser() == null ? null : auth.getCurrentUser().getUid();
-        if (uid == null) return;
+        if (auth.getCurrentUser() == null) return;
 
-        FirebaseDatabase.getInstance().getReference("users").child(uid).get()
+        String uid = auth.getCurrentUser().getUid();
+
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(uid)
+                .get()
                 .addOnSuccessListener(snap -> {
+
                     cachedNick = String.valueOf(snap.child("nick").getValue());
                     cachedPlace = String.valueOf(snap.child("place").getValue());
+
                     if ("null".equals(cachedNick)) cachedNick = "";
                     if ("null".equals(cachedPlace)) cachedPlace = "";
 
-                    vm.getTotal().observe(this, totalVal -> {
-                        Integer t = totalVal == null ? 0 : totalVal;
-                        vm.getDoneCount().observe(this, doneVal -> {
-                            Integer d = doneVal == null ? 0 : doneVal;
-                            if (cachedNick != null && cachedPlace != null) {
+                    // Подписка на изменение локальной статистики
+                    vm.total.observe(this, totalVal -> {
+                        int t = totalVal == null ? 0 : totalVal;
+
+                        vm.doneCount.observe(this, doneVal -> {
+                            int d = doneVal == null ? 0 : doneVal;
+
+                            if (cachedNick != null && cachedPlace != null &&
+                                    !cachedNick.isEmpty() && !cachedPlace.isEmpty()) {
+
                                 leaderboardRepo.updateUserStats(t, d, cachedNick, cachedPlace);
                             }
                         });
                     });
-                })
-                .addOnFailureListener(err -> {
                 });
     }
+
+    // -------------------------------------------------------------
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (auth != null && authListener != null) {
+        if (auth != null) {
             auth.removeAuthStateListener(authListener);
         }
     }

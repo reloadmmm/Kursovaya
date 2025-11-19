@@ -1,16 +1,20 @@
 package com.example.kursovaya.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -32,6 +36,10 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding b;
     private TaskViewModel vm;
     private FirebaseAuth auth;
+
+    private SharedPreferences prefs;
+    private ImageView ivThemeToggle;
+
     private String nick = "Гость";
 
     @Nullable
@@ -50,6 +58,20 @@ public class ProfileFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         vm = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 
+        prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+
+        ivThemeToggle = b.ivThemeToggle;
+        boolean darkOn = prefs.getBoolean("dark_theme", false);
+        updateThemeIcon(darkOn);
+        applyTheme(darkOn);
+
+        ivThemeToggle.setOnClickListener(v -> {
+            boolean nowDark = !prefs.getBoolean("dark_theme", false);
+            prefs.edit().putBoolean("dark_theme", nowDark).apply();
+            applyTheme(nowDark);
+            updateThemeIcon(nowDark);
+        });
+
         PieChart chart = b.pieChart;
         chart.getDescription().setEnabled(false);
         chart.setUsePercentValues(true);
@@ -61,6 +83,8 @@ public class ProfileFragment extends Fragment {
         chart.getLegend().setEnabled(false);
 
         TextView tvName = b.tvUserName;
+        TextView tvLevel = b.tvLevel;
+        TextView tvXp = b.tvXp;
         Button btnAuth = b.btnAuth;
         Button btnRate = b.btnRate;
         TextView tvFooter = b.tvFooter;
@@ -69,25 +93,28 @@ public class ProfileFragment extends Fragment {
             tvName.setText("Гость");
             btnAuth.setText("Регистрация / Вход");
             btnRate.setVisibility(View.GONE);
-            btnAuth.setOnClickListener(v ->
+            btnAuth.setOnClickListener(v1 ->
                     startActivity(new Intent(getContext(), AuthActivity.class)));
         } else {
             String uid = auth.getCurrentUser().getUid();
             FirebaseDatabase.getInstance().getReference("users").child(uid)
                     .get().addOnSuccessListener(snap -> {
                         nick = String.valueOf(snap.child("nick").getValue());
-                        tvName.setText(nick.isEmpty() ? "Без имени" : nick);
+                        if (nick == null || nick.equals("null") || nick.isEmpty()) {
+                            nick = "Без имени";
+                        }
+                        tvName.setText(nick);
                     });
 
             btnAuth.setText("Выйти");
-            btnAuth.setOnClickListener(v -> {
+            btnAuth.setOnClickListener(v12 -> {
                 auth.signOut();
                 tvName.setText("Гость");
                 btnRate.setVisibility(View.GONE);
             });
 
             btnRate.setVisibility(View.VISIBLE);
-            btnRate.setOnClickListener(v ->
+            btnRate.setOnClickListener(v13 ->
                     requireActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.container, new LeaderboardFragment())
                             .addToBackStack(null)
@@ -95,12 +122,35 @@ public class ProfileFragment extends Fragment {
         }
 
         vm.getDoneCount().observe(getViewLifecycleOwner(), doneCount -> {
-            vm.getTotal().observe(getViewLifecycleOwner(), totalCount ->
-                    updateChart(chart, doneCount == null ? 0 : doneCount,
-                            totalCount == null ? 0 : totalCount));
+            vm.getTotal().observe(getViewLifecycleOwner(), totalCount -> {
+                int done = doneCount == null ? 0 : doneCount;
+                int total = totalCount == null ? 0 : totalCount;
+
+                int xp = done * 30;
+                int level = xp / 100 + 1;
+
+                tvLevel.setText("Уровень " + level);
+                tvXp.setText("XP: " + xp);
+
+                updateChart(chart, done, total);
+            });
         });
 
-        tvFooter.setText("Разработал студент группы");
+        Button btnDiary = b.btnDiary;
+
+        if (auth.getCurrentUser() == null) {
+            btnDiary.setVisibility(View.GONE);
+        } else {
+            btnDiary.setVisibility(View.VISIBLE);
+            btnDiary.setOnClickListener(v ->
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.container, new DiaryFragment())
+                            .addToBackStack(null)
+                            .commit());
+        }
+
+
+        tvFooter.setText("разработал студент группы ...");
     }
 
     private void updateChart(PieChart chart, int done, int total) {
@@ -111,7 +161,7 @@ public class ProfileFragment extends Fragment {
         entries.add(new PieEntry(notDone, "Не выполнено"));
 
         PieDataSet set = new PieDataSet(entries, "");
-        set.setColors(Color.parseColor("#4CAF50"), Color.parseColor("#F44336")); // зелёный/красный
+        set.setColors(Color.parseColor("#4CAF50"), Color.parseColor("#F44336"));
         set.setValueTextColor(Color.BLACK);
         set.setValueTextSize(13f);
 
@@ -122,5 +172,19 @@ public class ProfileFragment extends Fragment {
         chart.setCenterText(String.format(Locale.getDefault(), "%.0f%%", percent));
 
         chart.invalidate();
+    }
+
+    private void applyTheme(boolean dark) {
+        if (dark) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
+
+    private void updateThemeIcon(boolean dark) {
+        if (ivThemeToggle != null) {
+            ivThemeToggle.setImageResource(dark ? R.drawable.ic_moon : R.drawable.ic_sun);
+        }
     }
 }

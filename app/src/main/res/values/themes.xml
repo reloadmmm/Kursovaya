@@ -1,8 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Kursovaya" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorSurface">#FFF8FF</item>
+        <item name="android:colorBackground">#FFF8FF</item>
+        <item name="android:windowBackground">#FFF8FF</item>
     </style>
 
     <style name="RoundedDialog" parent="ThemeOverlay.Material3.Dialog">
