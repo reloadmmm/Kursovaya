@@ -36,4 +36,12 @@ public interface TaskDao {
 
     @Query("UPDATE tasks SET status = :newStatus WHERE createdAt = :createdAt")
     void updateStatusByCreatedAt(long createdAt, String newStatus);
+
+    @Query("SELECT * FROM tasks WHERE dueAtMillis BETWEEN :from AND :to ORDER BY dueAtMillis")
+    LiveData<List<Task>> tasksForDay(long from, long to);
+
+    @Query("SELECT * FROM tasks WHERE status = 'pending' ORDER BY dueAtMillis LIMIT 3")
+    List<Task> getNearestPendingSync();
+
+
 }

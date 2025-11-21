@@ -11,28 +11,33 @@ import com.example.kursovaya.data.DiaryDao;
 import com.example.kursovaya.data.DiaryEntry;
 
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class DiaryViewModel extends AndroidViewModel {
 
     private final DiaryDao dao;
-    public final LiveData<List<DiaryEntry>> entries;
+    private final LiveData<List<DiaryEntry>> entries;
 
-    public DiaryViewModel(@NonNull Application app) {
-        super(app);
-        dao = AppDatabase.get(app).diaryDao();
+    public DiaryViewModel(@NonNull Application application) {
+        super(application);
+        dao = AppDatabase.get(application).diaryDao();
         entries = dao.observeAll();
     }
 
+    public LiveData<List<DiaryEntry>> getEntries() {
+        return entries;
+    }
+
+    public void add(String text, String audioPath) {
+        long now = System.currentTimeMillis();
+        DiaryEntry e = new DiaryEntry(text, now, audioPath);
+        AppDatabase.databaseWriteExecutor.execute(() -> dao.insert(e));
+    }
+
     public void add(String text) {
-        Executors.newSingleThreadExecutor().execute(
-                () -> dao.insert(new DiaryEntry(System.currentTimeMillis(), text))
-        );
+        add(text, null);
     }
 
     public void delete(DiaryEntry e) {
-        Executors.newSingleThreadExecutor().execute(
-                () -> dao.delete(e)
-        );
+        AppDatabase.databaseWriteExecutor.execute(() -> dao.delete(e));
     }
 }

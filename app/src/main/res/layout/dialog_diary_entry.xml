@@ -1,51 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    app:cardCornerRadius="20dp"
-    app:cardUseCompatPadding="true"
-    app:cardBackgroundColor="@color/card_bg">
+    android:padding="16dp"
+    android:background="@android:color/transparent">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        app:cardCornerRadius="20dp"
+        app:cardUseCompatPadding="true"
+        app:cardBackgroundColor="@color/diary_card">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Новая запись"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:paddingBottom="12dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Напиши сюда свои мысли"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeColor="#BDBDBD"
-            app:boxCornerRadiusTopStart="14dp"
-            app:boxCornerRadiusTopEnd="14dp"
-            app:boxCornerRadiusBottomStart="14dp"
-            app:boxCornerRadiusBottomEnd="14dp">
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDiaryText"
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Новая запись"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="?android:textColorPrimary"
+                android:paddingBottom="12dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minLines="3"
-                android:gravity="top"
-                android:textColor="@android:color/white"
-                android:textColorHint="#B0B0B0"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Напиши сюда свои мысли"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeColor="#BDBDBD"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusBottomEnd="14dp">
 
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDiaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minLines="3"
+                    android:gravity="top"
+                    android:textColor="?android:textColorPrimary"
+                    android:textColorHint="@color/diary_hint" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-</com.google.android.material.card.MaterialCardView>
+            <!-- блок записи / волн / проигрывания -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="16dp">
+
+                <!-- волны + статус -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:orientation="horizontal"
+                        android:gravity="bottom">
+
+                        <View
+                            android:id="@+id/wave1"
+                            android:layout_width="4dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/ic_mic_wave" />
+
+                        <View
+                            android:id="@+id/wave2"
+                            android:layout_width="4dp"
+                            android:layout_height="18dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/ic_mic_wave" />
+
+                        <View
+                            android:id="@+id/wave3"
+                            android:layout_width="4dp"
+                            android:layout_height="12dp"
+                            android:background="@drawable/ic_mic_wave" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvRecordStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Нажми на микрофон, чтобы записать голос"
+                        android:textSize="11sp"
+                        android:textColor="@color/diary_hint" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnRecord"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/ic_mic_ios"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_mic_white_24"
+                    android:contentDescription="Записать"
+                    app:tint="@android:color/white" />
+
+                <!-- кнопка play/pause -->
+                <ImageButton
+                    android:id="@+id/btnPlay"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/ic_play_ios"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_play_white_24"
+                    android:contentDescription="Прослушать"
+                    android:visibility="gone"
+                    app:tint="@android:color/white" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

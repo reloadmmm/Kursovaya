@@ -52,7 +52,11 @@ public class HomeFragment extends Fragment {
         b.fabAddBig.setOnClickListener(addClick);
         b.btnQuickAdd.setOnClickListener(addClick);
 
-        b.btnCalendar.setOnClickListener(v -> openCalendar());
+        b.btnCalendar.setOnClickListener(v -> {
+            CalendarBottomSheet sheet = new CalendarBottomSheet();
+            sheet.show(requireActivity().getSupportFragmentManager(), "calendar");
+        });
+
         b.btnQuickCalendar.setOnClickListener(v -> openCalendar());
 
         vm.pending.observe(getViewLifecycleOwner(), tasks -> {
@@ -77,7 +81,6 @@ public class HomeFragment extends Fragment {
         new DatePickerDialog(
                 requireContext(),
                 (view, year, month, dayOfMonth) -> {
-                    // здесь можно потом сделать фильтр по дате
                 },
                 c.get(Calendar.YEAR),
                 c.get(Calendar.MONTH),

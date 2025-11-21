@@ -12,4 +12,8 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
     <style name="Theme.Kursovaya" parent="Base.Theme.Kursovaya" />
+    <color name="diary_bg">#FFF6FF</color>
+    <color name="diary_card">#FFFBFF</color>
+    <color name="diary_hint">#9E9E9E</color>
 </resources>
+

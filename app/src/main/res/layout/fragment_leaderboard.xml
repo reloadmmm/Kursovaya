@@ -11,7 +11,7 @@
         android:entries="@array/leader_periods"/>
 
     <androidx.recyclerview.widget.RecyclerView
-
+        android:paddingTop="60dp"
         android:id="@+id/leaderList"
         android:layout_width="match_parent"
         android:layout_height="0dp"

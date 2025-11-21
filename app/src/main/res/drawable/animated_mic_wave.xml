@@ -1,0 +1,16 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_mic_wave">
+
+    <target
+        android:name="bar1"
+        android:animation="@animator/mic_bar1_scale" />
+
+    <target
+        android:name="bar2"
+        android:animation="@animator/mic_bar2_scale" />
+
+    <target
+        android:name="bar3"
+        android:animation="@animator/mic_bar3_scale" />
+
+</animated-vector>

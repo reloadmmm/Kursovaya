@@ -58,4 +58,11 @@ public class TaskViewModel extends AndroidViewModel {
     public LiveData<Integer> getDoneCount() {
         return doneCount;
     }
+
+    public LiveData<List<Task>> tasksForDay(long dayStart, long dayEnd) {
+        return AppDatabase.get(getApplication())
+                .taskDao()
+                .tasksForDay(dayStart, dayEnd);
+    }
+
 }

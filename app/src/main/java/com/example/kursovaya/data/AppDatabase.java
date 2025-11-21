@@ -7,6 +7,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(
         entities = {
                 Task.class,
@@ -14,13 +17,16 @@ import androidx.room.TypeConverters;
                 DiaryEntry.class,
                 GoalEvent.class
         },
-        version = 4,
+        version = 6,
         exportSchema = false
 )
 @TypeConverters({RoomConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;
+
+    public static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(4);
 
     public abstract TaskDao taskDao();
     public abstract HabitDao habitDao();

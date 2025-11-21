@@ -1,19 +1,25 @@
 package com.example.kursovaya.data;
 
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "diary")
+@Entity
 public class DiaryEntry {
 
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    public long id;
+
+    public long createdAtMillis;
 
     public String text;
-    public long createdAt;
 
-    public DiaryEntry(String text, long createdAt) {
+    @Nullable
+    public String audioPath;
+
+    public DiaryEntry(String text, long createdAtMillis, @Nullable String audioPath) {
         this.text = text;
-        this.createdAt = createdAt;
+        this.createdAtMillis = createdAtMillis;
+        this.audioPath = audioPath;
     }
 }

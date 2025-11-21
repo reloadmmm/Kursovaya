@@ -13,6 +13,7 @@
         android:padding="16dp">
 
         <LinearLayout
+            android:paddingTop="20dp"
             android:id="@+id/headerPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,13 +25,13 @@
                 style="@style/Widget.Material3.Button.Icon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:contentDescription="Календарь"
+                android:text=""
+                app:backgroundTint="#E0E0E0"
+                app:cornerRadius="20dp"
                 app:icon="@android:drawable/ic_menu_my_calendar"
                 app:iconSize="20dp"
-                app:iconTint="@android:color/black"
-                android:text=""
-                android:contentDescription="Календарь"
-                app:backgroundTint="#E0E0E0"
-                app:cornerRadius="20dp" />
+                app:iconTint="@android:color/black" />
         </LinearLayout>
 
         <TextView

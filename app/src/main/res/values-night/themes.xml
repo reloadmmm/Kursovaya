@@ -5,4 +5,7 @@
         <item name="android:colorBackground">#121212</item>
         <item name="android:windowBackground">#121212</item>
     </style>
+    <color name="diary_bg">#121212</color>
+    <color name="diary_card">#1E1E1E</color>
+    <color name="diary_hint">#B0B0B0</color>
 </resources>

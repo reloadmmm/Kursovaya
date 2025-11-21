@@ -5,29 +5,33 @@ import android.content.Context;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
-import java.util.concurrent.Executors;
 
 public class DiaryRepository {
 
     private final DiaryDao dao;
 
-    public DiaryRepository(Context ctx) {
-        dao = AppDatabase.get(ctx).diaryDao();
+    public DiaryRepository(Context context) {
+        dao = AppDatabase.get(context).diaryDao();
     }
 
     public LiveData<List<DiaryEntry>> getAll() {
-        return dao.getAll();
+        return dao.observeAll();
     }
 
-    public void add(String text) {
-        Executors.newSingleThreadExecutor().execute(() ->
-                dao.insert(new DiaryEntry(text, System.currentTimeMillis()))
-        );
+    public void addText(String text) {
+        long now = System.currentTimeMillis();
+        DiaryEntry e = new DiaryEntry(text, now, null);
+        AppDatabase.databaseWriteExecutor.execute(() -> dao.insert(e));
     }
 
+    public void addWithAudio(String text, String audioPath) {
+        long now = System.currentTimeMillis();
+        DiaryEntry e = new DiaryEntry(text, now, audioPath);
+        AppDatabase.databaseWriteExecutor.execute(() -> dao.insert(e));
+    }
+
+    // Удалить запись
     public void delete(DiaryEntry entry) {
-        Executors.newSingleThreadExecutor().execute(() ->
-                dao.delete(entry)
-        );
+        AppDatabase.databaseWriteExecutor.execute(() -> dao.delete(entry));
     }
 }

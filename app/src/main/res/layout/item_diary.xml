@@ -4,32 +4,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="#F5F5F5">
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="18dp"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="@color/diary_card">
 
     <LinearLayout
-        android:paddingTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="21.11.2025 13:29"
             android:textSize="12sp"
-            android:textColor="#9E9E9E"/>
+            android:textColor="@color/diary_hint"
+            android:paddingBottom="4dp"/>
 
         <TextView
             android:id="@+id/tvText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Текст заметки"
             android:textSize="15sp"
-            android:textColor="#424242"
-            android:layout_marginTop="4dp"/>
+            android:textColor="?android:textColorPrimary"
+            android:paddingBottom="8dp"/>
+
+        <LinearLayout
+            android:id="@+id/audioContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_audio_bubble_ios"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ivAudioIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_mic_white_24"
+                app:tint="@android:color/white"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/tvAudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Голосовое сообщение"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>
