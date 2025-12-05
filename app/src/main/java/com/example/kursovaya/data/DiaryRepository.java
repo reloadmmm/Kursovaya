@@ -30,7 +30,6 @@ public class DiaryRepository {
         AppDatabase.databaseWriteExecutor.execute(() -> dao.insert(e));
     }
 
-    // Удалить запись
     public void delete(DiaryEntry entry) {
         AppDatabase.databaseWriteExecutor.execute(() -> dao.delete(entry));
     }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "806706818836",
+    "project_id": "kursovaya-5b0a8",
+    "storage_bucket": "kursovaya-5b0a8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:806706818836:android:7cdf18261816227b515c01",
+        "android_client_info": {
+          "package_name": "com.example.kursovaya"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtteIDK5To_NczGWb1o_zeNyvhHs2oNBY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

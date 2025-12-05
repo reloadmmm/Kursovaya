@@ -43,7 +43,7 @@ public class LeaderboardFragment extends Fragment {
             String place = String.valueOf(snap.child("place").getValue());
             String periodKey; String periodNode;
             Calendar c = Calendar.getInstance();
-            int i = spPeriod.getSelectedItemPosition(); // 0: месяц, 1: полгода, 2: год
+            int i = spPeriod.getSelectedItemPosition();
             if (i==0){ periodNode="monthly"; periodKey=new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(c.getTime()); }
             else if (i==1){ String y = new SimpleDateFormat("yyyy", Locale.getDefault()).format(c.getTime()); periodNode="halfyear"; periodKey=y+(c.get(Calendar.MONTH)<6?"-H1":"-H2"); }
             else { periodNode="yearly"; periodKey=new SimpleDateFormat("yyyy", Locale.getDefault()).format(c.getTime()); }

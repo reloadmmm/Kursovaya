@@ -31,7 +31,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.VH> {
     private final SimpleDateFormat fmt =
             new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
 
-    // ← для анимации
     private int lastAnimatedPos = -1;
 
     public TaskAdapter(OnAction onDone, OnAction onRelapse) {
@@ -43,7 +42,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.VH> {
         data.clear();
         if (items != null) data.addAll(items);
         notifyDataSetChanged();
-        // сбрасываем, чтобы при обновлении списка анимация проигрывалась заново
         lastAnimatedPos = -1;
     }
 
@@ -70,7 +68,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.VH> {
         h.btnDone.setOnClickListener(v -> onDone.run(t));
         h.btnRelapse.setOnClickListener(v -> onRelapse.run(t));
 
-        // --------- АНИМАЦИЯ КАРТОЧКИ ---------
         if (pos > lastAnimatedPos) {
             lastAnimatedPos = pos;
             View item = h.itemView;

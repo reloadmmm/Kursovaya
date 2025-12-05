@@ -113,7 +113,6 @@ public class HomeFragment extends Fragment {
             b.quickPanel.setVisibility(View.VISIBLE);
             b.quickPanel.setAlpha(0f);
 
-            // ↓↓↓ Опускаем на 13dp ↓↓↓
             float offset = getResources().getDisplayMetrics().density * 13f;
             b.quickPanel.setTranslationY(-offset);
 

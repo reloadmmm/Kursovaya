@@ -16,8 +16,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -35,6 +39,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class DiaryFragment extends Fragment {
+
+    private static final int REQ_RECORD_AUDIO = 1001;
 
     private FragmentDiaryBinding b;
     private DiaryAdapter adapter;
@@ -72,7 +78,6 @@ public class DiaryFragment extends Fragment {
         attachSwipeToDelete();
     }
 
-    // свайп влево → "Удалить"
     private void attachSwipeToDelete() {
         ItemTouchHelper.SimpleCallback callback =
                 new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -172,10 +177,24 @@ public class DiaryFragment extends Fragment {
 
         AnimatorSet waveAnim = createWaveAnimator(wave1, wave2, wave3);
 
-        // запись (iOS-микрофон + анимации)
         btnRecord.setOnClickListener(v -> {
             if (!isRecording[0]) {
-                // анимация «нажатия» как на iOS
+
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED) {
+
+                    requestPermissions(
+                            new String[]{Manifest.permission.RECORD_AUDIO},
+                            REQ_RECORD_AUDIO
+                    );
+                    Toast.makeText(getContext(),
+                            "Разрешите доступ к микрофону, чтобы записывать аудио",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 btnRecord.animate()
                         .scaleX(1.12f)
                         .scaleY(1.12f)
@@ -234,7 +253,6 @@ public class DiaryFragment extends Fragment {
             }
         });
 
-        // предпрослушка (play/pause)
         btnPlay.setOnClickListener(v -> {
             if (audioPath[0] == null) return;
 
@@ -306,7 +324,6 @@ public class DiaryFragment extends Fragment {
     }
 
     private AnimatorSet createWaveAnimator(View w1, View w2, View w3) {
-        // чуть «айосовый» мягкий waveform – разные фазы и амплитуды
         ObjectAnimator a1 = ObjectAnimator.ofFloat(w1, "scaleY", 0.4f, 1.2f);
         a1.setRepeatCount(ValueAnimator.INFINITE);
         a1.setRepeatMode(ValueAnimator.REVERSE);

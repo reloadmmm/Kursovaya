@@ -5,6 +5,17 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+
+import com.example.kursovaya.notif.NotificationUtil;
+import com.example.kursovaya.App;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.kursovaya.data.LeaderboardRepo;
 import com.example.kursovaya.databinding.ActivityMainBinding;
@@ -20,14 +31,12 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private TaskViewModel vm;
 
-    // Firebase
     private FirebaseAuth auth;
     private String cachedNick = null;
     private String cachedPlace = null;
 
     private final LeaderboardRepo leaderboardRepo = new LeaderboardRepo();
 
-    // слушатель входа/выхода
     private final FirebaseAuth.AuthStateListener authListener = firebaseAuth -> {
         if (firebaseAuth.getCurrentUser() != null) {
             fetchProfileAndWireLeaderboard();
@@ -37,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    // -------------------------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +53,25 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (Build.VERSION.SDK_INT >= 33) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        1002
+                );
+            }
+        }
+
         vm = new ViewModelProvider(this).get(TaskViewModel.class);
 
-        // Инициализация Firebase Auth
         auth = FirebaseAuth.getInstance();
         auth.addAuthStateListener(authListener);
 
-        // нижнее меню
         binding.bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
@@ -69,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding.bottomNav.setSelectedItemId(R.id.nav_home);
 
-        // Долгое нажатие по вкладке "Главная" -> показать/спрятать quickPanel в HomeFragment
         binding.bottomNav.post(() -> {
             View homeTab = binding.bottomNav.findViewById(R.id.nav_home);
             if (homeTab != null) {
@@ -84,13 +103,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // если пользователь уже авторизован
         if (auth.getCurrentUser() != null) {
             fetchProfileAndWireLeaderboard();
         }
     }
 
-    // -------------------------------------------------------------
 
     private void show(androidx.fragment.app.Fragment f) {
         getSupportFragmentManager()
@@ -99,9 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    // -------------------------------------------------------------
-    // получаем профиль → подписываемся на статистику → пушим в leaderboard
-    // -------------------------------------------------------------
     private void fetchProfileAndWireLeaderboard() {
         if (auth.getCurrentUser() == null) return;
 
@@ -118,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                     if ("null".equals(cachedNick)) cachedNick = "";
                     if ("null".equals(cachedPlace)) cachedPlace = "";
 
-                    // Подписка на изменение локальной статистики
                     vm.total.observe(this, totalVal -> {
                         int t = totalVal == null ? 0 : totalVal;
 
@@ -135,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    // -------------------------------------------------------------
 
     @Override
     protected void onDestroy() {

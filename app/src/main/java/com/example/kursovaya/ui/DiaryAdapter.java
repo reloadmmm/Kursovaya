@@ -50,7 +50,6 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.VH> {
 
         holder.b.tvText.setText(e.text);
 
-        // ВАЖНО: используем createdAtMillis
         holder.b.tvDate.setText(fmt.format(e.createdAtMillis));
 
         if (e.audioPath != null) {

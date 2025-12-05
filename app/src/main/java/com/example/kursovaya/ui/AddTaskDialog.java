@@ -3,8 +3,8 @@ package com.example.kursovaya.ui;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.view.View;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -21,6 +21,7 @@ import com.example.kursovaya.viewmodel.TaskViewModel;
 import java.util.Calendar;
 
 public class AddTaskDialog extends DialogFragment {
+
     private DialogAddTaskBinding b;
     private long selectedMillis = -1;
 
@@ -47,10 +48,28 @@ public class AddTaskDialog extends DialogFragment {
 
         b.btnSave.setOnClickListener(v -> {
             TaskViewModel vm = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
+
             String title = b.etTitle.getText().toString().trim();
             boolean rewardOn = b.swReward.isChecked();
             boolean notifyOn = b.swNotify.isChecked();
-            int interval = notifyOn ? safeInt(String.valueOf(b.etInterval.getText()), 60) : 0;
+
+            int interval = 0;
+            if (notifyOn) {
+                String raw = b.etInterval.getText() != null
+                        ? b.etInterval.getText().toString().trim()
+                        : "";
+
+                if (raw.isEmpty()) {
+                    interval = 1;
+                } else {
+                    try {
+                        interval = Integer.parseInt(raw);
+                    } catch (Exception e) {
+                        interval = 1;
+                    }
+                }
+                if (interval < 1) interval = 1;
+            }
 
             if (title.isEmpty() || selectedMillis <= 0) {
                 Toast.makeText(getContext(), "Заполни название и срок", Toast.LENGTH_SHORT).show();
@@ -58,14 +77,22 @@ public class AddTaskDialog extends DialogFragment {
             }
 
             Task t = new Task(
-                    title, selectedMillis,
-                    rewardOn, rewardOn ? String.valueOf(b.etReward.getText()) : null,
-                    notifyOn, interval,
-                    "pending", System.currentTimeMillis()
+                    title,
+                    selectedMillis,
+                    rewardOn,
+                    rewardOn ? String.valueOf(b.etReward.getText()) : null,
+                    notifyOn,
+                    interval,
+                    "pending",
+                    System.currentTimeMillis()
             );
 
             vm.add(t);
             dismiss();
+
+            if (getActivity() instanceof QuickAddActivity) {
+                getActivity().finish();
+            }
         });
 
         return b.getRoot();
@@ -75,7 +102,10 @@ public class AddTaskDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         if (getDialog() != null && getDialog().getWindow() != null) {
-            int w = (int) (requireContext().getResources().getDisplayMetrics().widthPixels * 0.92f);
+            int w = (int) (requireContext()
+                    .getResources()
+                    .getDisplayMetrics()
+                    .widthPixels * 0.92f);
             getDialog().getWindow().setLayout(w, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
     }
@@ -89,13 +119,11 @@ public class AddTaskDialog extends DialogFragment {
                 c.set(Calendar.MINUTE, min);
                 c.set(Calendar.SECOND, 0);
                 selectedMillis = c.getTimeInMillis();
-                b.btnDue.setText("Срок: " + d + "." + (m + 1) + "." + y + " " + h + ":" + String.format("%02d", min));
+                String text = "Срок: " + d + "." + (m + 1) + "." + y +
+                        " " + h + ":" + String.format("%02d", min);
+                b.btnDue.setText(text);
             }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
-    }
-
-    private int safeInt(String s, int def) {
-        try { return Integer.parseInt(s); } catch (Exception e) { return def; }
     }
 
     private void toggle(View v, boolean show) {

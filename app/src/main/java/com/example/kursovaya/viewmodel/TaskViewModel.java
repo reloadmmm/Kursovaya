@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import com.example.kursovaya.data.AppDatabase;
 import com.example.kursovaya.data.Task;
 import com.example.kursovaya.data.TaskRepository;
-
+import com.example.kursovaya.notif.NotifScheduler;
 import java.util.List;
 
 public class TaskViewModel extends AndroidViewModel {
@@ -39,17 +39,21 @@ public class TaskViewModel extends AndroidViewModel {
 
     public void add(Task t) {
         repo.insert(t);
+        NotifScheduler.scheduleForTask(getApplication(), t);
     }
 
     public void markDone(Task t) {
         t.status = "done";
         repo.update(t);
+        NotifScheduler.cancelForTask(getApplication(), t.createdAt);
     }
 
     public void markRelapse(Task t) {
         t.status = "relapse";
         repo.update(t);
+        NotifScheduler.cancelForTask(getApplication(), t.createdAt);
     }
+
 
     public LiveData<Integer> getTotal() {
         return total;

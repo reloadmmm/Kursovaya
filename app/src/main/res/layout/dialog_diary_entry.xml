@@ -51,7 +51,6 @@
                     android:textColorHint="@color/diary_hint" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- блок записи / волн / проигрывания -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,7 +58,6 @@
                 android:gravity="center_vertical"
                 android:layout_marginTop="16dp">
 
-                <!-- волны + статус -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -114,7 +112,6 @@
                     android:contentDescription="Записать"
                     app:tint="@android:color/white" />
 
-                <!-- кнопка play/pause -->
                 <ImageButton
                     android:id="@+id/btnPlay"
                     android:layout_width="40dp"

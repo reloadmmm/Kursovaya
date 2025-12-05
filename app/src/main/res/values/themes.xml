@@ -11,9 +11,26 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+
     <style name="Theme.Kursovaya" parent="Base.Theme.Kursovaya" />
+
     <color name="diary_bg">#FFF6FF</color>
     <color name="diary_card">#FFFBFF</color>
     <color name="diary_hint">#9E9E9E</color>
+
+    <style name="Theme.Kursovaya.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+        <!-- Radius of the outer bound of widgets to make the rounded corners -->
+        <item name="appWidgetRadius">16dp</item>
+        <!--
+        Radius of the inner view's bound of widgets to make the rounded corners.
+        It needs to be 8dp or less than the value of appWidgetRadius
+        -->
+        <item name="appWidgetInnerRadius">8dp</item>
+    </style>
+
+    <style name="Theme.Kursovaya.AppWidgetContainer" parent="Theme.Kursovaya.AppWidgetContainerParent">
+        <!-- Apply padding to avoid the content of the widget colliding with the rounded corners -->
+        <item name="appWidgetPadding">16dp</item>
+    </style>
 </resources>
 
